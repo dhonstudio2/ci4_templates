@@ -27,7 +27,13 @@ class DhonCurl extends Controller
     {
         $result = $this->client->request('GET', $this->api_url . $endpoint, [
             'headers' => $headers,
-        ]);
-        return json_decode(json_decode($result->getJSON(), true), true);
+        ])->getJSON();
+        return json_decode(json_decode($result, true), true);
+    }
+
+    public function curl_get($url)
+    {
+        $result = $this->client->request('GET', $url)->getJSON();
+        return json_decode(json_decode($result, true), true);
     }
 }

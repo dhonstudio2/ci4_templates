@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Libraries\DhonAuth;
 use App\Libraries\DhonCurl;
+use App\Libraries\DhonHit;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -62,5 +63,8 @@ abstract class BaseController extends Controller
             'Content-Type'  => 'application/json',
             'Authorization' => "Bearer " . $this->token,
         ]);
+
+        $dhonhit = new DhonHit();
+        $dhonhit->hit($this->token);
     }
 }
