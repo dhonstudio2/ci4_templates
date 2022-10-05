@@ -7,7 +7,7 @@ use CodeIgniter\Controller;
 class DhonCurl extends Controller
 {
     protected $client;
-    protected $api_url = 'http://localhost:8080/';
+    protected $api_url = getenv('API_SECRET_URL');
 
     public function __construct()
     {
