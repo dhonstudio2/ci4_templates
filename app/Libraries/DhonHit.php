@@ -3,9 +3,14 @@
 namespace App\Libraries;
 
 use CodeIgniter\Controller;
+use CodeIgniter\Cookie\Cookie;
+use DateTime;
 
 class DhonHit extends Controller
 {
+    protected $session_name = 'DH1022s';
+    protected $session_expire = '+104 weeks';
+
     public function hit($token)
     {
         $dhoncurl = new DhonCurl();
@@ -32,17 +37,56 @@ class DhonHit extends Controller
             }
         }
 
-        $addresses = $dhoncurl->get('address/getListByIP/' . $ip_address, [
-            'Content-Type'  => 'application/json',
-            'Authorization' => "Bearer " . $token,
-        ])['Data'];
+        $entity = isset($_SERVER['HTTP_USER_AGENT']) ? htmlentities($_SERVER['HTTP_USER_AGENT']) : 'BOT';
 
-        $id_address = count($addresses) > 0 ? $addresses[0]['id_address'] : $dhoncurl->post('address', [
+        $session_secure = ENVIRONMENT === 'production' ? true : false;
+        $session_prefix = ENVIRONMENT === 'production' ? '__Secure-' : '__m-';
+        $session_value  = "BOT";
+
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            helper('text');
+            helper('cookie');
+
+            $session_value  = random_string('alnum', 32) . $ip_address;
+            $session_cookie = (new Cookie($this->session_name))
+                ->withValue($session_value)
+                ->withPrefix($session_prefix)
+                ->withExpires(new DateTime($this->session_expire))
+                ->withPath('/')
+                ->withDomain('')
+                ->withSecure($session_secure)
+                ->withHTTPOnly(true)
+                ->withSameSite(Cookie::SAMESITE_LAX);
+
+            if (!get_cookie($session_prefix . $this->session_name) || get_cookie($session_prefix . $this->session_name) === '' || get_cookie($session_prefix . $this->session_name) === null) {
+                set_cookie($session_cookie);
+            } else {
+                $session_value = get_cookie($session_prefix . $this->session_name);
+            }
+        }
+
+        $source_value = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : base_url();
+
+        if ($_GET) {
+            $get_join = [];
+            foreach ($_GET as $key => $value) {
+                array_push($get_join, $key . '=' . $value);
+            }
+            $get = '?' . implode('&', $get_join);
+        } else {
+            $get = '';
+        }
+        $page_value = uri_string() ? base_url() . '/' . uri_string() . $get : base_url() . '/';
+
+        $dhoncurl->post('hit', [
             'Content-Type'  => 'application/json',
             'Authorization' => "Bearer " . $token,
         ], [
-            'ip_address' => $ip_address,
-            'ip_info' => json_encode($dhoncurl->curl_get("http://ip-api.com/json/{$ip_address}")),
-        ])['Data']['id_address'];
+            'address' => $ip_address,
+            'entity' => $entity,
+            'session' => $session_value,
+            'source' => $source_value,
+            'page' => $page_value,
+        ])['Data'];
     }
 }
