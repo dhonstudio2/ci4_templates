@@ -7,11 +7,12 @@ use CodeIgniter\Controller;
 class DhonCurl extends Controller
 {
     protected $client;
-    protected $api_url = getenv('API_SECRET_URL');
+    protected $api_url;
 
     public function __construct()
     {
         $this->client = \Config\Services::curlrequest();
+        $this->api_url = getenv('API_SECRET_URL');
     }
 
     public function post($endpoint, $headers, $form_params)
