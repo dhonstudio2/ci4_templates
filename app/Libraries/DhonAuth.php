@@ -16,8 +16,8 @@ class DhonAuth extends Controller
     {
         $dhoncurl = new DhonCurl();
         $this->token = $dhoncurl->post('login', '', [
-            "email" => "doon13@gmail.com",
-            "password" => "adminDS"
+            "email" => getenv('API_SECRET_EMAIL'),
+            "password" => getenv('API_SECRET_PASS')
         ])['access_token'];
     }
 }
