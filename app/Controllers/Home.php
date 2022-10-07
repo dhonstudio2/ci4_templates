@@ -6,11 +6,14 @@ class Home extends BaseController
 {
     public function index()
     {
-        // return view('welcome_message');
+        return view('welcome_message', $this->data);
     }
 
-    public function ajax_getUser()
+    public function templatemo($name, $page = '')
     {
-        # code...
+        $view = $page ? $name . '/' . $page : $name;
+        $this->data['template_name'] = $name;
+        $this->data['template_page'] = $page;
+        return view('templatemo/' . $view, $this->data);
     }
 }
