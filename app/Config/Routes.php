@@ -37,6 +37,8 @@ $routes->set404Override();
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
 $routes->get('me', 'Home::index');
+$routes->get('templatemo/(:segment)', 'Home::templatemo/$1');
+$routes->get('templatemo/(:segment)/(:segment)', 'Home::templatemo/$1/$2');
 
 /*
  * --------------------------------------------------------------------
