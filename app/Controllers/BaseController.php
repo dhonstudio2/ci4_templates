@@ -41,7 +41,7 @@ abstract class BaseController extends Controller
     protected $helpers = [];
 
     protected $token;
-    protected $assets = "https://dhonstudio.com/assets/";
+    protected $assets = getenv("ASSETS_URL");
     protected $data;
 
     /**
