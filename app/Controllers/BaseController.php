@@ -41,7 +41,7 @@ abstract class BaseController extends Controller
     protected $helpers = [];
 
     protected $token;
-    protected $assets = getenv("ASSETS_URL");
+    protected $assets;
     protected $data;
 
     /**
@@ -68,6 +68,8 @@ abstract class BaseController extends Controller
 
         $dhonhit = new DhonHit();
         $dhonhit->hit($this->token);
+
+        $this->assets = getenv("ASSETS_URL");
 
         $this->data = [
             'assets' => $this->assets
